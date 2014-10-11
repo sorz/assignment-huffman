@@ -10,6 +10,24 @@ public class Dictionary {
     private final static String FILE_HEADER = "HF-Dict";
     private final static int EOF_FLAG = -233;
 
+    public static class CharacterWithCodeLength {
+        private int character;
+        private int codeLength;
+
+        private CharacterWithCodeLength(int character, int codeLength) {
+            this.character = character;
+            this.codeLength = codeLength;
+        }
+
+        public int getCharacter() {
+            return character;
+        }
+
+        public int getCodeLength() {
+            return codeLength;
+        }
+    }
+
     public static Dictionary generate(InputStream in) throws IOException, IllegalCharacterException {
         // Count the number of each character.
         int[] counter = new int[128];
@@ -85,6 +103,34 @@ public class Dictionary {
         if (character < 1 || character > 127)
             throw new IllegalCharacterException(character);
         return codes[character];
+    }
+
+    public CharacterWithCodeLength readCharacter(InputStream inputStream, int position) throws IOException {
+        Node node = treeRoot;
+        int code = inputStream.read();
+        if (code == -1) // Reach EOF.
+            return null;
+        code <<= position;
+        int codeLength = 0;
+        while (node != null) {
+            if (node.getCharacter() != Node.NO_CHARACTER)  // Reach leaf, character found.
+                return new CharacterWithCodeLength(node.getCharacter(), codeLength);
+
+            if ((code & 0x01) == 0)  // 0 is left, 1 is right.
+                node = node.getLeftChild();
+            else
+                node = node.getRightChild();
+
+            ++codeLength;
+            code >>= 1;
+
+            if ((codeLength + position) % 8 == 0) {
+                code = inputStream.read();
+                if (code == -1)
+                    break; // TODO: throw exception.
+            }
+        }
+        throw new IOException("Unexpected code."); // TODO: write a new exception class.
     }
 
     public void save(OutputStream outputStream) throws IOException {

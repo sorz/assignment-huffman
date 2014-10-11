@@ -51,6 +51,8 @@ public class Decoder {
         } catch (FileNotFoundException e) {
             System.err.printf("Input file not found on %s\n", inputFile.getPath());
             return EXIT_CODE_IO_ERROR;
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             try {
                 if (inputStream != null)
