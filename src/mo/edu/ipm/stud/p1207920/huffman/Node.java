@@ -15,7 +15,7 @@ public class Node implements Comparable<Node> {
     }
 
     public Node(int character) {
-        this(NO_CHARACTER, character);
+        this(character, UNDEFINED_PRIORITY);
     }
 
     public Node(int character, int priority) {

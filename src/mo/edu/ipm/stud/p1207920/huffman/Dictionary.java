@@ -91,9 +91,12 @@ public class Dictionary {
     public Dictionary(Code[] codes) {
         // Generate huffman tree from codes.
         Node root = new Node();
-        for (int i = 0; i < codes.length; ++i)
-            if (codes[i] != null)
-                createPathToCharacter(i, codes[i].getCode(), codes[i].getLength(), root);
+        for (int i = 0; i < codes.length; ++i) {
+            if (codes[i] == null)
+                continue;
+            int mask = (int) Math.pow(2, codes[i].getLength() - 1);
+            createPathToCharacter(i, codes[i].getCode(), mask, root);
+        }
 
         this.codes = codes;
         this.treeRoot = root;
@@ -112,22 +115,22 @@ public class Dictionary {
             return null;
         code <<= position;
         int codeLength = 0;
+        int mask = 0x80;
         while (node != null) {
             if (node.getCharacter() != Node.NO_CHARACTER)  // Reach leaf, character found.
                 return new CharacterWithCodeLength(node.getCharacter(), codeLength);
-
-            if ((code & 0x01) == 0)  // 0 is left, 1 is right.
+            if (code == -1)
+                break; // TODO: throw exception.
+            if ((code & mask) == 0)  // 0 is left, 1 is right.
                 node = node.getLeftChild();
             else
                 node = node.getRightChild();
 
             ++codeLength;
-            code >>= 1;
+            mask >>= 1;
 
-            if ((codeLength + position) % 8 == 0) {
+            if (mask == 0) {
                 code = inputStream.read();
-                if (code == -1)
-                    break; // TODO: throw exception.
             }
         }
         throw new IOException("Unexpected code."); // TODO: write a new exception class.
@@ -156,17 +159,15 @@ public class Dictionary {
             codes[node.getCharacter()] = new Code(code, codeLength);
     }
 
-    private static Node createPathToCharacter(int character, int code, int codeLength, Node parent) {
-        if (codeLength < 0)
-            return null;
-        else if (codeLength == 0)
+    private static Node createPathToCharacter(int character, int code, int mask, Node parent) {
+        if (mask == 0)
             return new Node(character);
         if (parent == null)
             parent = new Node();
-        if ((code & 0x01) == 0)  // 0 is left, 1 is right.
-            parent.setLeftChild(createPathToCharacter(character, code >> 1, codeLength - 1, parent.getLeftChild()));
+        if ((code & mask) == 0)  // 0 is left, 1 is right.
+            parent.setLeftChild(createPathToCharacter(character, code, mask >> 1, parent.getLeftChild()));
         else
-            parent.setRightChild(createPathToCharacter(character, code >> 1, codeLength - 1, parent.getRightChild()));
+            parent.setRightChild(createPathToCharacter(character, code, mask >> 1, parent.getRightChild()));
         return parent;
     }
 }
