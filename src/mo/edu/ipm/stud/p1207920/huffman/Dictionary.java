@@ -6,6 +6,7 @@ import java.util.PriorityQueue;
 
 public class Dictionary {
     private Code[] codes;
+    private Node treeRoot;
     private final static String FILE_HEADER = "HF-Dict";
     private final static int EOF_FLAG = -233;
 
@@ -33,10 +34,7 @@ public class Dictionary {
         }
         Node root = queue.poll();
 
-        // Generate code for each character.
-        Code[] codes = new Code[128];
-        calculateCodes(root, 0, 0, codes);
-        return new Dictionary(codes);
+        return new Dictionary(root);
     }
 
     public static Dictionary load(File file) throws IOException {
@@ -62,8 +60,25 @@ public class Dictionary {
         return new Dictionary(codes);
     }
 
-    public Dictionary(Code[] codes) {
+
+    public Dictionary(Node treeRoot) {
+        // Generate codes from huffman tree.
+        Code[] codes = new Code[128];
+        calculateCodes(treeRoot, 0, 0, codes);
+
+        this.treeRoot = treeRoot;
         this.codes = codes;
+    }
+
+    public Dictionary(Code[] codes) {
+        // Generate huffman tree from codes.
+        Node root = new Node();
+        for (int i = 0; i < codes.length; ++i)
+            if (codes[i] != null)
+                createPathToCharacter(i, codes[i].getCode(), codes[i].getLength(), root);
+
+        this.codes = codes;
+        this.treeRoot = root;
     }
 
     public Code getCode(int character) throws IllegalCharacterException {
@@ -91,7 +106,21 @@ public class Dictionary {
             calculateCodes(node.getLeftChild(), code << 1, codeLength + 1, codes);
         if (node.getRightChild() != null)
             calculateCodes(node.getRightChild(), (code << 1) + 1, codeLength + 1, codes);
-        if (node.getCharacter() != 0)
+        if (node.getCharacter() != Node.NO_CHARACTER)
             codes[node.getCharacter()] = new Code(code, codeLength);
+    }
+
+    private static Node createPathToCharacter(int character, int code, int codeLength, Node parent) {
+        if (codeLength < 0)
+            return null;
+        else if (codeLength == 0)
+            return new Node(character);
+        if (parent == null)
+            parent = new Node();
+        if ((code & 0x01) == 0)  // 0 is left, 1 is right.
+            parent.setLeftChild(createPathToCharacter(character, code >> 1, codeLength - 1, parent.getLeftChild()));
+        else
+            parent.setRightChild(createPathToCharacter(character, code >> 1, codeLength - 1, parent.getRightChild()));
+        return parent;
     }
 }
