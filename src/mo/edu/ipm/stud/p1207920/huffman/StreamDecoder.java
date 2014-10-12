@@ -19,17 +19,16 @@ public class StreamDecoder {
         int code = inputStream.read();
         int mask = 0x80;  // The highest bit of a byte.
         while (node != null) {
-            if (node.getCharacter() != Node.NO_CHARACTER) {
+            if (node.getCharacter() == Dictionary.END_OF_STREAM_CHARACTER) {
+                return;
+            } else if (node.getCharacter() != Node.NO_CHARACTER) {
                 // Reach leaf, character found.
                 outputStream.write(node.getCharacter());
                 node = treeRoot;
                 continue;
             }
             if (code == -1)  // EOF reached.
-                if (node == treeRoot)
-                    return;
-//                else  // But need more bit to decode current character.
-//                    throw new UnexpectedEndOfStreamException();
+                return;
 
             if ((code & mask) == 0)  // 0  is left, 1 is right.
                 node = node.getLeftChild();

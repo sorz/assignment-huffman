@@ -29,7 +29,15 @@ public class StreamEncoder {
                 length -= 8;
             }
         }
-        if (length > 0)
-            outputStream.write((buffer << (8 - length)) & 0xff);
+        if (length > 0) {
+            int paddingLength = 8 - length;
+            int out = (buffer << paddingLength) & 0xff;
+            Code endCode = dictionary.getEndOfStreamCode();
+            while (paddingLength > 0) {
+                out |= endCode.getCode() >> (endCode.getLength() - paddingLength);
+                paddingLength -= endCode.getLength();
+            }
+            outputStream.write(out);
+        }
     }
 }

@@ -8,6 +8,8 @@ import java.io.*;
 import java.util.PriorityQueue;
 
 public class Dictionary {
+    final static public int END_OF_STREAM_CHARACTER = 128;
+
     private Code[] codes;
     private Node treeRoot;
     private final static String FILE_HEADER = "HF-Dict";
@@ -15,13 +17,14 @@ public class Dictionary {
 
     public static Dictionary generate(InputStream in) throws IOException, IllegalCharacterException {
         // Count the number of each character.
-        int[] counter = new int[128];
+        int[] counter = new int[129];
         int character;
         while ((character = in.read()) != -1) {
             if (character < 1 || character > 127)
                 throw new IllegalCharacterException(character);
             ++counter[character];
         }
+        counter[END_OF_STREAM_CHARACTER] = -1;
 
         // Create node and put into queue.
         PriorityQueue<Node> queue = new PriorityQueue<Node>(128);
@@ -66,7 +69,7 @@ public class Dictionary {
 
     public Dictionary(Node treeRoot) {
         // Generate codes from huffman tree.
-        Code[] codes = new Code[128];
+        Code[] codes = new Code[129];
         calculateCodes(treeRoot, 0, 0, codes);
 
         this.treeRoot = treeRoot;
@@ -91,6 +94,10 @@ public class Dictionary {
         if (character < 1 || character > 127)
             throw new IllegalCharacterException(character);
         return codes[character];
+    }
+
+    public Code getEndOfStreamCode() {
+        return codes[END_OF_STREAM_CHARACTER];
     }
 
     public Node getTreeRoot() {
