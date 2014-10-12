@@ -17,17 +17,25 @@ public class StreamDecoder {
     public void decode(InputStream inputStream, OutputStream outputStream) throws IOException {
         Node treeRoot = dictionary.getTreeRoot();
         Node node = treeRoot;
+        byte[] writeBuffer = new byte[2048];
+        int writeLength = 0;
         int code = inputStream.read();
         int mask = 0x80;  // The highest bit of a byte.
         long characterCounter = 0;
         while (node != null) {
             if (node.getCharacter() != Node.NO_CHARACTER) {
                 // Reach leaf, character found.
-                outputStream.write(node.getCharacter());
+                writeBuffer[writeLength++] = (byte) node.getCharacter();
+                if (writeLength >= writeBuffer.length) {
+                    outputStream.write(writeBuffer);
+                    writeLength = 0;
+                }
                 node = treeRoot;
                 ++characterCounter;
-                if (characterCounter >= dictionary.getFileSize())
+                if (characterCounter >= dictionary.getFileSize()) {
+                    outputStream.write(writeBuffer, 0, writeLength);
                     return;
+                }
                 continue;
             }
             if (code == -1)  // EOF reached.
