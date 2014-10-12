@@ -1,6 +1,8 @@
 package mo.edu.ipm.stud.p1207920.huffman;
 
 
+import mo.edu.ipm.stud.p1207920.huffman.exceptions.IllegalCharacterException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -1,6 +1,9 @@
 package mo.edu.ipm.stud.p1207920.huffman;
 
 
+import mo.edu.ipm.stud.p1207920.huffman.exceptions.IllegalCharacterException;
+import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedFileFormatException;
+
 import java.io.*;
 import java.util.PriorityQueue;
 

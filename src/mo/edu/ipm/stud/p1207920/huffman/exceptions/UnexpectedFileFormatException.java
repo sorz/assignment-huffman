@@ -1,4 +1,4 @@
-package mo.edu.ipm.stud.p1207920.huffman;
+package mo.edu.ipm.stud.p1207920.huffman.exceptions;
 
 
 import java.io.IOException;

@@ -1,6 +1,6 @@
 import mo.edu.ipm.stud.p1207920.huffman.Dictionary;
-import mo.edu.ipm.stud.p1207920.huffman.IllegalCharacterException;
 import mo.edu.ipm.stud.p1207920.huffman.StreamEncoder;
+import mo.edu.ipm.stud.p1207920.huffman.exceptions.IllegalCharacterException;
 
 import java.io.*;
 

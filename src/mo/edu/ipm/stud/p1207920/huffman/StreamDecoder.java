@@ -1,5 +1,7 @@
 package mo.edu.ipm.stud.p1207920.huffman;
 
+import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedEndOfStreamException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,7 +29,7 @@ public class StreamDecoder {
                 if (node == treeRoot)
                     return;
                 else  // But need more bit to decode current character.
-                    break; // TODO: throw exception.
+                    throw new UnexpectedEndOfStreamException();
 
             if ((code & mask) == 0)  // 0  is left, 1 is right.
                 node = node.getLeftChild();
