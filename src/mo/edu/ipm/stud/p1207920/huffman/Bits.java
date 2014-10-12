@@ -1,17 +1,17 @@
 package mo.edu.ipm.stud.p1207920.huffman;
 
 
-public class Code {
-    private int code;
+public class Bits {
+    private int bits;
     private int length;
 
-    public Code(int code, int length) {
-        this.code = code;
+    public Bits(int bits, int length) {
+        this.bits = bits;
         this.length = length;
     }
 
-    public int getCode() {
-        return code;
+    public int getBits() {
+        return bits;
     }
 
     public int getLength() {

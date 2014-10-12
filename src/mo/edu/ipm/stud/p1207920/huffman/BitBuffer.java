@@ -13,10 +13,10 @@ public class BitBuffer {
         byteBuffer = new byte[size];
     }
 
-    public void writeBits(Code code) {
-        bitBuffer <<= code.getLength();
-        bitBuffer |= code.getCode();
-        bitLength += code.getLength();
+    public void writeBits(Bits bits) {
+        bitBuffer <<= bits.getLength();
+        bitBuffer |= bits.getBits();
+        bitLength += bits.getLength();
 
         if (bitLength >= 8)
             moveBitsToByteBuffer();
@@ -33,8 +33,8 @@ public class BitBuffer {
         }
     }
 
-    public Code getRemindingBits() {
-        return new Code(bitBuffer & 0xff, bitLength);
+    public Bits getRemindingBits() {
+        return new Bits(bitBuffer & 0xff, bitLength);
     }
 
     public void writeOut(OutputStream outputStream) throws IOException {

@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.PriorityQueue;
 
 public class Dictionary {
-    private Code[] codes;
+    private Bits[] codes;
     private Node treeRoot;
     private long fileSize;
     private final static String FILE_HEADER = "HF-Dict";
@@ -49,7 +49,7 @@ public class Dictionary {
 
     public static Dictionary load(File file) throws IOException {
         InputStream inputStream = null;
-        Code[] codes;
+        Bits[] codes;
         long size;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
@@ -59,10 +59,10 @@ public class Dictionary {
 
             size = input.readLong();
             int codesNum = input.readInt();
-            codes = new Code[codesNum];
+            codes = new Bits[codesNum];
             int i;
             while ((i = input.readInt()) != EOF_FLAG)
-                codes[i] = new Code(input.readInt(), input.readInt());
+                codes[i] = new Bits(input.readInt(), input.readInt());
         } catch (EOFException e) {
             throw new UnexpectedFileFormatException(e);
         } finally {
@@ -75,7 +75,7 @@ public class Dictionary {
 
     public Dictionary(Node treeRoot, long fileSize) {
         // Generate codes from huffman tree.
-        Code[] codes = new Code[128];
+        Bits[] codes = new Bits[128];
         calculateCodes(treeRoot, 0, 0, codes);
 
         this.treeRoot = treeRoot;
@@ -83,14 +83,14 @@ public class Dictionary {
         this.fileSize = fileSize;
     }
 
-    public Dictionary(Code[] codes, long fileSize) {
+    public Dictionary(Bits[] codes, long fileSize) {
         // Generate huffman tree from codes.
         Node root = new Node();
         for (int i = 0; i < codes.length; ++i) {
             if (codes[i] == null)
                 continue;
             int mask = (int) Math.pow(2, codes[i].getLength() - 1);
-            createPathToCharacter(i, codes[i].getCode(), mask, root);
+            createPathToCharacter(i, codes[i].getBits(), mask, root);
         }
 
         this.codes = codes;
@@ -98,7 +98,7 @@ public class Dictionary {
         this.fileSize = fileSize;
     }
 
-    public Code getCode(int character) throws IllegalCharacterException {
+    public Bits getCode(int character) throws IllegalCharacterException {
         if (character < 1 || character > 127)
             throw new IllegalCharacterException(character);
         return codes[character];
@@ -121,19 +121,19 @@ public class Dictionary {
             if (codes[i] == null)
                 continue;
             output.writeInt(i);
-            output.writeInt(codes[i].getCode());
+            output.writeInt(codes[i].getBits());
             output.writeInt(codes[i].getLength());
         }
         output.writeInt(EOF_FLAG);
     }
 
-    private static void calculateCodes(Node node, int code, int codeLength, Code[] codes) {
+    private static void calculateCodes(Node node, int code, int codeLength, Bits[] codes) {
         if (node.getLeftChild() != null)
             calculateCodes(node.getLeftChild(), code << 1, codeLength + 1, codes);
         if (node.getRightChild() != null)
             calculateCodes(node.getRightChild(), (code << 1) + 1, codeLength + 1, codes);
         if (node.getCharacter() != Node.NO_CHARACTER)
-            codes[node.getCharacter()] = new Code(code, codeLength);
+            codes[node.getCharacter()] = new Bits(code, codeLength);
     }
 
     private static Node createPathToCharacter(int character, int code, int mask, Node parent) {
