@@ -26,12 +26,11 @@ public class StreamDecoder {
                 outputStream.write(node.getCharacter());
                 node = treeRoot;
                 ++characterCounter;
+                if (characterCounter >= dictionary.getFileSize())
+                    return;
                 continue;
             }
             if (code == -1)  // EOF reached.
-                if (node == treeRoot || characterCounter >= dictionary.getFileSize())
-                    return;
-                else  // But need more bit to decode current character.
                     throw new UnexpectedEndOfStreamException();
 
             if ((code & mask) == 0)  // 0  is left, 1 is right.
