@@ -19,7 +19,9 @@ public class StreamDecoder {
         Node node = treeRoot;
         byte[] writeBuffer = new byte[2048];
         int writeLength = 0;
-        int code = inputStream.read();
+        byte[] readBuffer = new byte[2048];
+        int readLength = inputStream.read(readBuffer);
+        int readPosition = 0;
         int mask = 0x80;  // The highest bit of a byte.
         long characterCounter = 0;
         while (node != null) {
@@ -38,19 +40,23 @@ public class StreamDecoder {
                 }
                 continue;
             }
-            if (code == -1)  // EOF reached.
-                    throw new UnexpectedEndOfStreamException();
+            if (readLength == -1)  // EOF reached.
+                throw new UnexpectedEndOfStreamException();
 
-            if ((code & mask) == 0)  // 0  is left, 1 is right.
+            if ((readBuffer[readPosition] & mask) == 0)  // 0  is left, 1 is right.
                 node = node.getLeftChild();
             else
                 node = node.getRightChild();
 
-            mask >>= 1;
+            mask >>= 1; // Check next bit.
             if (mask == 0) {
-                // Read next byte, reset mask to the highest bit of byte.
-                code = inputStream.read();
+                // Reset mask to the highest bit of byte.
                 mask = 0x80;
+                // Read next byte.
+                if (++readPosition >= readLength) {
+                    readLength = inputStream.read(readBuffer);
+                    readPosition = 0;
+                }
             }
         }
         // node == null.
