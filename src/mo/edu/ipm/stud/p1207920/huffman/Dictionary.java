@@ -108,33 +108,10 @@ public class Dictionary {
         return codes[character];
     }
 
-    public CharacterWithCodeLength readCharacter(InputStream inputStream, int position) throws IOException {
-        Node node = treeRoot;
-        int code = inputStream.read();
-        if (code == -1) // Reach EOF.
-            return null;
-        code <<= position;
-        int codeLength = 0;
-        int mask = 0x80;
-        while (node != null) {
-            if (node.getCharacter() != Node.NO_CHARACTER)  // Reach leaf, character found.
-                return new CharacterWithCodeLength(node.getCharacter(), codeLength);
-            if (code == -1)
-                break; // TODO: throw exception.
-            if ((code & mask) == 0)  // 0 is left, 1 is right.
-                node = node.getLeftChild();
-            else
-                node = node.getRightChild();
-
-            ++codeLength;
-            mask >>= 1;
-
-            if (mask == 0) {
-                code = inputStream.read();
-            }
-        }
-        throw new IOException("Unexpected code."); // TODO: write a new exception class.
+    public Node getTreeRoot() {
+        return treeRoot;
     }
+
 
     public void save(OutputStream outputStream) throws IOException {
         DataOutput output = new DataOutputStream(outputStream);
