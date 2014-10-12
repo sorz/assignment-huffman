@@ -17,13 +17,17 @@ public class Dictionary {
     public static Dictionary generate(InputStream in) throws IOException, IllegalCharacterException {
         // Count the number of each character.
         int[] counter = new int[128];
-        int character;
         long size = 0;
-        while ((character = in.read()) != -1) {
-            if (character < 1 || character > 127)
-                throw new IllegalCharacterException(character);
-            ++counter[character];
-            ++size;
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = in.read(buffer)) != -1) {
+            for (int i = 0; i < len; ++i) {
+                int character = buffer[i];
+                if (character < 1)
+                    throw new IllegalCharacterException(character);
+                ++counter[character];
+                ++size;
+            }
         }
 
         // Create node and put into queue.
