@@ -10,6 +10,7 @@ import java.util.PriorityQueue;
 public class Dictionary {
     private Code[] codes;
     private Node treeRoot;
+    private long fileSize;
     private final static String FILE_HEADER = "HF-Dict";
     private final static int EOF_FLAG = -233;
 
@@ -17,10 +18,12 @@ public class Dictionary {
         // Count the number of each character.
         int[] counter = new int[128];
         int character;
+        long size = 0;
         while ((character = in.read()) != -1) {
             if (character < 1 || character > 127)
                 throw new IllegalCharacterException(character);
             ++counter[character];
+            ++size;
         }
 
         // Create node and put into queue.
@@ -37,18 +40,20 @@ public class Dictionary {
         }
         Node root = queue.poll();
 
-        return new Dictionary(root);
+        return new Dictionary(root, size);
     }
 
     public static Dictionary load(File file) throws IOException {
         InputStream inputStream = null;
         Code[] codes;
+        long size;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
             DataInput input = new DataInputStream(inputStream);
             if (!input.readUTF().equals(FILE_HEADER))
                 throw new UnexpectedFileFormatException();
 
+            size = input.readLong();
             int codesNum = input.readInt();
             codes = new Code[codesNum];
             int i;
@@ -60,20 +65,21 @@ public class Dictionary {
             if (inputStream != null)
                 inputStream.close();
         }
-        return new Dictionary(codes);
+        return new Dictionary(codes, size);
     }
 
 
-    public Dictionary(Node treeRoot) {
+    public Dictionary(Node treeRoot, long fileSize) {
         // Generate codes from huffman tree.
         Code[] codes = new Code[128];
         calculateCodes(treeRoot, 0, 0, codes);
 
         this.treeRoot = treeRoot;
         this.codes = codes;
+        this.fileSize = fileSize;
     }
 
-    public Dictionary(Code[] codes) {
+    public Dictionary(Code[] codes, long fileSize) {
         // Generate huffman tree from codes.
         Node root = new Node();
         for (int i = 0; i < codes.length; ++i) {
@@ -85,6 +91,7 @@ public class Dictionary {
 
         this.codes = codes;
         this.treeRoot = root;
+        this.fileSize = fileSize;
     }
 
     public Code getCode(int character) throws IllegalCharacterException {
@@ -97,10 +104,14 @@ public class Dictionary {
         return treeRoot;
     }
 
+    public long getFileSize() {
+        return fileSize;
+    }
 
     public void save(OutputStream outputStream) throws IOException {
         DataOutput output = new DataOutputStream(outputStream);
         output.writeUTF(FILE_HEADER);
+        output.writeLong(getFileSize());
         output.writeInt(codes.length);
         for (int i = 0; i < codes.length; ++i) {
             if (codes[i] == null)
