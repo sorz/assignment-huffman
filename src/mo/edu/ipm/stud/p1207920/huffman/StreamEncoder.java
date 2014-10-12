@@ -16,20 +16,23 @@ public class StreamEncoder {
 
     public void encode(InputStream inputStream, OutputStream outputStream)
             throws IOException, IllegalCharacterException {
-        int character;
-        int buffer = 0;
-        int length = 0;
-        while ((character = inputStream.read()) != -1) {
-            Code code = dictionary.getCode(character);
-            buffer <<= code.getLength();
-            buffer |= code.getCode();
-            length += code.getLength();
-            while (length >= 8) {
-                outputStream.write((buffer >> (length - 8)) & 0xff);
-                length -= 8;
+        int writeBuffer = 0;
+        int writeLength = 0;
+        byte[] readBuffer = new byte[2048];
+        int readLength;
+        while ((readLength = inputStream.read(readBuffer)) != -1) {
+            for (int i = 0; i < readLength; ++i) {
+                Code code = dictionary.getCode(readBuffer[i]);
+                writeBuffer <<= code.getLength();
+                writeBuffer |= code.getCode();
+                writeLength += code.getLength();
+                while (writeLength >= 8) {
+                    outputStream.write((writeBuffer >> (writeLength - 8)) & 0xff);
+                    writeLength -= 8;
+                }
             }
         }
-        if (length > 0)
-            outputStream.write((buffer << (8 - length)) & 0xff);
+        if (writeLength > 0)
+            outputStream.write((writeBuffer << (8 - writeLength)) & 0xff);
     }
 }

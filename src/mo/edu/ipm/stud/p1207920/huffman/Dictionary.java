@@ -18,7 +18,7 @@ public class Dictionary {
         // Count the number of each character.
         int[] counter = new int[128];
         long size = 0;
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[2048];
         int len;
         while ((len = in.read(buffer)) != -1) {
             for (int i = 0; i < len; ++i) {
