@@ -23,6 +23,8 @@ public class Decoder {
         if (result == 0) {
             long runningTime = System.currentTimeMillis() - beginTime;
             System.out.printf("(%.3fs in total.)", runningTime / 1000.0);
+        } else {
+            System.out.print("Decoding was interrupted, output is incomplete or totally wrong.");
         }
         System.exit(result);
     }
