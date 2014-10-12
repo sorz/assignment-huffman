@@ -16,7 +16,13 @@ public class Decoder {
             System.err.println("Usage: java Decode abc.dat abc.dic abc-result.txt");
             System.exit(EXIT_CODE_ARGS_ERROR);
         }
+
+        long beginTime = System.currentTimeMillis();
         int result = decodeFile(args[0], args[1], args[2]);
+        if (result == 0) {
+            long runningTime = System.currentTimeMillis() - beginTime;
+            System.out.printf("(%.3fs in total.)", runningTime / 1000.0);
+        }
         System.exit(result);
     }
 
