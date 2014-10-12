@@ -25,11 +25,11 @@ public class StreamEncoder {
             buffer |= code.getCode();
             length += code.getLength();
             while (length >= 8) {
-                outputStream.write(buffer >> (length - 8));
+                outputStream.write((buffer >> (length - 8)) & 0xff);
                 length -= 8;
             }
         }
         if (length > 0)
-            outputStream.write(buffer << (length - 8));
+            outputStream.write((buffer << (8 - length)) & 0xff);
     }
 }
