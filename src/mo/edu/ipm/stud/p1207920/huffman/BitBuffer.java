@@ -23,7 +23,7 @@ public class BitBuffer {
     }
 
     public boolean isFull() {
-        return bytePosition >= byteBuffer.length;
+        return bytePosition >= byteBuffer.length - 1;
     }
 
     private void moveBitsToByteBuffer() {
