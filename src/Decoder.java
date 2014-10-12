@@ -2,6 +2,7 @@ import mo.edu.ipm.stud.p1207920.huffman.Dictionary;
 import mo.edu.ipm.stud.p1207920.huffman.StreamDecoder;
 import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedEndOfStreamException;
 import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedFileFormatException;
+import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnknownCodeException;
 
 import java.io.*;
 
@@ -59,8 +60,10 @@ public class Decoder {
             System.err.printf("Input file not found on %s\n", inputFile.getPath());
             return EXIT_CODE_IO_ERROR;
         } catch (UnexpectedEndOfStreamException e) {
-            System.err.println("Unexpected end of file, please whether the file is complete.");
+            System.err.println("Unexpected end of file, please whether the data file is complete.");
             return EXIT_CODE_IO_ERROR;
+        } catch (UnknownCodeException e) {
+            System.err.println("Unknown code found, please check whether the data file and dictionary are matched.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

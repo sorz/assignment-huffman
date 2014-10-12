@@ -1,6 +1,7 @@
 package mo.edu.ipm.stud.p1207920.huffman;
 
 import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedEndOfStreamException;
+import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnknownCodeException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,5 +44,7 @@ public class StreamDecoder {
                 mask = 0x80;
             }
         }
+        // node == null.
+        throw new UnknownCodeException();
     }
 }
