@@ -30,6 +30,6 @@ public class StreamEncoder {
             }
         }
         if (length > 0)
-            outputStream.write(buffer);
+            outputStream.write(buffer << (length - 8));
     }
 }
