@@ -27,7 +27,7 @@ public class Decoder {
 
         // Load dictionary.
         System.out.println("Loading dictionary...");
-        Dictionary dictionary = null;
+        Dictionary dictionary;
         try {
             dictionary = Dictionary.load(dictionaryFile);
         } catch (FileNotFoundException e) {

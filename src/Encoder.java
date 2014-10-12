@@ -31,8 +31,8 @@ public class Encoder {
         File dictionaryFile = new File(dictionaryPath);
 
         // Generate dictionary.
-        InputStream inputStream = null;
-        Dictionary dictionary = null;
+        InputStream inputStream;
+        Dictionary dictionary;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(inputFile));
             // Only buffer less than 16 MiB to avoid using too much memory.
@@ -53,7 +53,7 @@ public class Encoder {
         }
 
         // Write out dictionary.
-        OutputStream dictionaryStream = null;
+        OutputStream dictionaryStream;
         try {
             dictionaryStream = new BufferedOutputStream(new FileOutputStream(dictionaryFile));
             System.out.println("Writing dictionary...");

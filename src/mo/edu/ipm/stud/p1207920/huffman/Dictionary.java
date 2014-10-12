@@ -13,24 +13,6 @@ public class Dictionary {
     private final static String FILE_HEADER = "HF-Dict";
     private final static int EOF_FLAG = -233;
 
-    public static class CharacterWithCodeLength {
-        private int character;
-        private int codeLength;
-
-        private CharacterWithCodeLength(int character, int codeLength) {
-            this.character = character;
-            this.codeLength = codeLength;
-        }
-
-        public int getCharacter() {
-            return character;
-        }
-
-        public int getCodeLength() {
-            return codeLength;
-        }
-    }
-
     public static Dictionary generate(InputStream in) throws IOException, IllegalCharacterException {
         // Count the number of each character.
         int[] counter = new int[128];
