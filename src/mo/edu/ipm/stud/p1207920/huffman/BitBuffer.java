@@ -3,8 +3,8 @@ package mo.edu.ipm.stud.p1207920.huffman;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class BitBuffer {
-    private byte[] byteBuffer;
+class BitBuffer {
+    private final byte[] byteBuffer;
     private int bytePosition = -1;
     private int bitBuffer;
     private int bitLength;

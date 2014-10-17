@@ -6,8 +6,8 @@ import java.io.Serializable;
 public class Node implements Comparable<Node>, Serializable {
     final static public int NO_CHARACTER = 0;
 
-    private int character;
-    private int priority;
+    private final int character;
+    private final int priority;
     private Node leftChild;
     private Node rightChild;
 

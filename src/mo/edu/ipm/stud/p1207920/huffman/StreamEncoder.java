@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class StreamEncoder {
-    private Dictionary dictionary;
+    private final Dictionary dictionary;
 
     public StreamEncoder(Dictionary dictionary) {
         this.dictionary = dictionary;

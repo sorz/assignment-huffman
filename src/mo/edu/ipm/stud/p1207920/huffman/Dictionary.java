@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.util.PriorityQueue;
 
 public class Dictionary implements Serializable {
-    private Bits[] codes;
-    private Node treeRoot;
-    private long fileSize;
+    private final Bits[] codes;
+    private final Node treeRoot;
+    private final long fileSize;
 
     public static Dictionary generate(InputStream in) throws IOException, IllegalCharacterException {
         // Count the number of each character.
@@ -46,7 +46,7 @@ public class Dictionary implements Serializable {
         return new Dictionary(root, size);
     }
 
-    public Dictionary(Node treeRoot, long fileSize) {
+    private Dictionary(Node treeRoot, long fileSize) {
         // Generate codes from huffman tree.
         Bits[] codes = new Bits[128];
         calculateCodes(treeRoot, 0, 0, codes);
