@@ -7,12 +7,13 @@ import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedFileFormatException
 import java.io.*;
 import java.util.PriorityQueue;
 
-public class Dictionary {
+public class Dictionary implements Serializable {
+    private final static String FILE_HEADER = "HF-Dict";
+    private final static int EOF_FLAG = -233;
+
     private Bits[] codes;
     private Node treeRoot;
     private long fileSize;
-    private final static String FILE_HEADER = "HF-Dict";
-    private final static int EOF_FLAG = -233;
 
     public static Dictionary generate(InputStream in) throws IOException, IllegalCharacterException {
         // Count the number of each character.

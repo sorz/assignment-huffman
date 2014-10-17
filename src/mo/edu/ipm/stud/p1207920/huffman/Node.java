@@ -1,7 +1,9 @@
 package mo.edu.ipm.stud.p1207920.huffman;
 
 
-public class Node implements Comparable<Node> {
+import java.io.Serializable;
+
+public class Node implements Comparable<Node>, Serializable {
     final static public int UNDEFINED_PRIORITY = 0;
     final static public int NO_CHARACTER = 0;
 

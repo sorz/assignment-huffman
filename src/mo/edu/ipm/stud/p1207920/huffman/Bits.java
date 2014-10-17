@@ -1,7 +1,8 @@
 package mo.edu.ipm.stud.p1207920.huffman;
 
+import java.io.Serializable;
 
-public class Bits {
+public class Bits implements Serializable {
     private int bits;
     private int length;
 

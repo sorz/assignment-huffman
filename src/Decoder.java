@@ -1,7 +1,6 @@
 import mo.edu.ipm.stud.p1207920.huffman.Dictionary;
 import mo.edu.ipm.stud.p1207920.huffman.StreamDecoder;
 import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedEndOfStreamException;
-import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedFileFormatException;
 import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnknownCodeException;
 
 import java.io.*;
@@ -38,11 +37,12 @@ public class Decoder {
         System.out.println("Loading dictionary...");
         Dictionary dictionary;
         try {
-            dictionary = Dictionary.load(dictionaryFile);
+            ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(dictionaryFile));
+            dictionary = (Dictionary) inputStream.readObject();
         } catch (FileNotFoundException e) {
             System.err.printf("Dictionary file not found on %s\n", dictionaryFile.getPath());
             return EXIT_CODE_IO_ERROR;
-        } catch (UnexpectedFileFormatException e) {
+        } catch (ClassNotFoundException e) {
             System.err.println("Invalid or damaged dictionary file.");
             return EXIT_CODE_IO_ERROR;
         } catch (IOException e) {

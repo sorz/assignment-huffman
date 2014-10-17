@@ -53,12 +53,11 @@ public class Encoder {
         }
 
         // Write out dictionary.
-        OutputStream dictionaryStream;
+        ObjectOutputStream dictionaryStream;
         try {
-            dictionaryStream = new BufferedOutputStream(new FileOutputStream(dictionaryFile));
+            dictionaryStream = new ObjectOutputStream(new FileOutputStream(dictionaryFile));
             System.out.println("Writing dictionary...");
-            dictionary.save(dictionaryStream);
-            dictionaryStream.flush();
+            dictionaryStream.writeObject(dictionary);
             dictionaryStream.close();
         } catch (FileNotFoundException e) {
             System.err.printf("Cannot write dictionary to %s\n", dictionaryFile.getPath());
