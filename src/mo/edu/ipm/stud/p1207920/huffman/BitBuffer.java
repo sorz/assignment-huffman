@@ -40,7 +40,7 @@ public class BitBuffer {
     public void writeOut(OutputStream outputStream) throws IOException {
         if (bitLength >= 8)
             moveBitsToByteBuffer();
-        outputStream.write(byteBuffer, 0, bytePosition + 1);
-        bytePosition = -1;
+        outputStream.write(byteBuffer, 0, bytePosition + 1);  // write out all
+        bytePosition = -1;  // reset
     }
 }

@@ -23,9 +23,8 @@ public class StreamEncoder {
             for (int i = 0; i < readLength; ++i) {
                 Bits bits = dictionary.getCode(readBuffer[i]);
                 bitBuffer.writeBits(bits);
-                while (bitBuffer.isFull()) {
+                if (bitBuffer.isFull())
                     bitBuffer.writeOut(outputStream);
-                }
             }
             bitBuffer.writeOut(outputStream);
         }
