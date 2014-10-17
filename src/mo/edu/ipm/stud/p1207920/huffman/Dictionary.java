@@ -2,15 +2,13 @@ package mo.edu.ipm.stud.p1207920.huffman;
 
 
 import mo.edu.ipm.stud.p1207920.huffman.exceptions.IllegalCharacterException;
-import mo.edu.ipm.stud.p1207920.huffman.exceptions.UnexpectedFileFormatException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.PriorityQueue;
 
 public class Dictionary implements Serializable {
-    private final static String FILE_HEADER = "HF-Dict";
-    private final static int EOF_FLAG = -233;
-
     private Bits[] codes;
     private Node treeRoot;
     private long fileSize;
@@ -48,32 +46,6 @@ public class Dictionary implements Serializable {
         return new Dictionary(root, size);
     }
 
-    public static Dictionary load(File file) throws IOException {
-        InputStream inputStream = null;
-        Bits[] codes;
-        long size;
-        try {
-            inputStream = new BufferedInputStream(new FileInputStream(file));
-            DataInput input = new DataInputStream(inputStream);
-            if (!input.readUTF().equals(FILE_HEADER))
-                throw new UnexpectedFileFormatException();
-
-            size = input.readLong();
-            int codesNum = input.readInt();
-            codes = new Bits[codesNum];
-            int i;
-            while ((i = input.readInt()) != EOF_FLAG)
-                codes[i] = new Bits(input.readInt(), input.readInt());
-        } catch (EOFException e) {
-            throw new UnexpectedFileFormatException(e);
-        } finally {
-            if (inputStream != null)
-                inputStream.close();
-        }
-        return new Dictionary(codes, size);
-    }
-
-
     public Dictionary(Node treeRoot, long fileSize) {
         // Generate codes from huffman tree.
         Bits[] codes = new Bits[128];
@@ -81,21 +53,6 @@ public class Dictionary implements Serializable {
 
         this.treeRoot = treeRoot;
         this.codes = codes;
-        this.fileSize = fileSize;
-    }
-
-    public Dictionary(Bits[] codes, long fileSize) {
-        // Generate huffman tree from codes.
-        Node root = new Node();
-        for (int i = 0; i < codes.length; ++i) {
-            if (codes[i] == null)
-                continue;
-            int mask = (int) Math.pow(2, codes[i].getLength() - 1);
-            createPathToCharacter(i, codes[i].getBits(), mask, root);
-        }
-
-        this.codes = codes;
-        this.treeRoot = root;
         this.fileSize = fileSize;
     }
 
@@ -113,21 +70,6 @@ public class Dictionary implements Serializable {
         return fileSize;
     }
 
-    public void save(OutputStream outputStream) throws IOException {
-        DataOutput output = new DataOutputStream(outputStream);
-        output.writeUTF(FILE_HEADER);
-        output.writeLong(getFileSize());
-        output.writeInt(codes.length);
-        for (int i = 0; i < codes.length; ++i) {
-            if (codes[i] == null)
-                continue;
-            output.writeInt(i);
-            output.writeInt(codes[i].getBits());
-            output.writeInt(codes[i].getLength());
-        }
-        output.writeInt(EOF_FLAG);
-    }
-
     private static void calculateCodes(Node node, int code, int codeLength, Bits[] codes) {
         if (node.getLeftChild() != null)
             calculateCodes(node.getLeftChild(), code << 1, codeLength + 1, codes);
@@ -137,15 +79,4 @@ public class Dictionary implements Serializable {
             codes[node.getCharacter()] = new Bits(code, codeLength);
     }
 
-    private static Node createPathToCharacter(int character, int code, int mask, Node parent) {
-        if (mask == 0)
-            return new Node(character);
-        if (parent == null)
-            parent = new Node();
-        if ((code & mask) == 0)  // 0 is left, 1 is right.
-            parent.setLeftChild(createPathToCharacter(character, code, mask >> 1, parent.getLeftChild()));
-        else
-            parent.setRightChild(createPathToCharacter(character, code, mask >> 1, parent.getRightChild()));
-        return parent;
-    }
 }

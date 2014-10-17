@@ -4,7 +4,6 @@ package mo.edu.ipm.stud.p1207920.huffman;
 import java.io.Serializable;
 
 public class Node implements Comparable<Node>, Serializable {
-    final static public int UNDEFINED_PRIORITY = 0;
     final static public int NO_CHARACTER = 0;
 
     private int character;
@@ -12,13 +11,6 @@ public class Node implements Comparable<Node>, Serializable {
     private Node leftChild;
     private Node rightChild;
 
-    public Node() {
-        this(NO_CHARACTER, UNDEFINED_PRIORITY);
-    }
-
-    public Node(int character) {
-        this(character, UNDEFINED_PRIORITY);
-    }
 
     public Node(int character, int priority) {
         this.character = character;
@@ -45,14 +37,6 @@ public class Node implements Comparable<Node>, Serializable {
 
     public Node getRightChild() {
         return rightChild;
-    }
-
-    public void setLeftChild(Node leftChild) {
-        this.leftChild = leftChild;
-    }
-
-    public void setRightChild(Node rightChild) {
-        this.rightChild = rightChild;
     }
 
     @Override
