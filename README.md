@@ -1,5 +1,5 @@
-# assignmnet-huffman
-My work of assignmnet on *Multimedia Applications Development* course.
+# assignment-huffman
+My work of assignment on *Multimedia Applications Development* course.
 
 ## Question
 > Q2. Using java, implement the Huffman algorithm for encoding (`Encoder.java`)
